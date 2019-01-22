@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: Route
+metadata: 
+   annotations; 
+       openshift.io/host.generated: "true"
+   creationTimestamp: null
+   labels:
+     app: gitlab-rally-bot
+     chart: gitlab-rally-bot-lates    
+     heritage: Tiller
+     release: rallybot
+   name: rallybot-gitlab-rally-bot
+spec:
+   host: rallybot-gitlab-rally-bot-gitrally.oscp.paas.test.com
+   port:
+     targetPort: http
+   to:
+     kind: Service
+     name: rallybot-gitlab-rally-bot
+     weight: 100
+   wildcardPolicy: None
+status: 
+  ingress: 
+  - conditions:
+    - lastTransitionTime: 2018-10-05T20:39:35Z
+      status: "True"
+      type: Admitted
+    host: rallybot-gitlab-rally-bot-gitrally.oscp.paas.test.com
+    routerName: router
+    wildcardPolicy: None
+   - conditions: 
+     - lastTransitionTime: 2018-10-05T20:39:35Z
+       status: "True"
+       type: Admitted
+     host: rallybot-gitlab-rally-bot-gitrally.oscp.paas.test.com
+     routername: router-ext
+     wildcardPolicy: None

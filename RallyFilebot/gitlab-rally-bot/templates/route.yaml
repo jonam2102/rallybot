@@ -1,0 +1,9 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata: 
+  name: {{ template "gitlab-rally-bot.fullname" . }}
+spec: 
+ host: {{ .Values.hostname }}
+ to: 
+   kind: Service
+   name: {{ template "gitlab-rally-bot.fullname" . }}

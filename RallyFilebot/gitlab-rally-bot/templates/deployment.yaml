@@ -1,0 +1,36 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "gitlab-rally-bot.fullname" . }}
+  labels:
+    app: {{ template "gitlab-rally-bot.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }} 
+    heritage: {{ .Release.Service }}
+spec: 
+   strategy: 
+    type: Recreate
+   replicas: {{ .Values.replicaCount }}
+   template: 
+    metadata: 
+       labels:
+          app: {{ template "gitlab-rally-bot.name" . }}
+          release: {{ .Release.Name }} 
+       spec: 
+         containers: 
+           - name: {{ . Chart.Name }}
+             image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+             imagePullPolicy: {{ .Values.image.pullPolicy }}
+             env: 
+               - name: rally_api_token
+                 value: {{ .Values.rally_api_token }}
+             ports:
+               - containerPort: {{ .Values.service.internalPort }}
+             resources:
+{{ toYaml .Values.resource | indent 12 }}
+    dnsPolicy: ClusterFirst
+    restartPolicy: Always
+    {{ - if .Values.nodeSelectory }}
+       nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+   {{ - end }}

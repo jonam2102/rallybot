@@ -1,0 +1,5 @@
+[EPEL7-custom-noarch]
+name=EPEL7-custom-noarch
+baseurl=http://test.sys.com/swift/v1/sattelite/EPEL7/EPEL7
+enabled=1
+

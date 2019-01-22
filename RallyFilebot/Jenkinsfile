@@ -55,6 +55,32 @@ node('linux')
     withCredentials([string(credentialsId: 'Openshift_devops-jenkins-dev', variable: 'pass')])
 
 {
-	
-}  }
+	sh """
+                  oc login $openshifturl --token=$pass
+                  oc project $openshiftnamespace
+           """
+
+        def checkServiceaccount = sh returnStatus: true, script: "pc create serviceaccount tiller -n $openshiftnamespace
+       
+        if (checkServiceaccount == 0){
+ 
+                  sh """
+                      oc policy add-role-to-user edit system-serviceaccount:$openshiftnamespace:tiller -n $openshiftnamespace
+                      helm init --service-account=tiller --tiller-namespace --tiller-image quay.sys.test.com/test/tiller:$tillertag --history-max 5 -- wait """
+    withCredentials([string(credentialsId: 'Rally_cred', variable: 'rally_api_token')]){
+             sh "helm upgrade --install --tiller-namespace $openshiftnamespace --namespace -$openshiftnamespace $openshiftreleasename ./gitlab-rallybot/ --set rally_api_token=$rally_api_token --wait"
+
+}
+
+}
+
+else {
+        sh "helm init --service-account=tiller --tiller-namespace --tiller-image quay.sys.test.com/test/tiller:$tillertag --history-max 5 -- wait "
+
+   withCredentials([string(credentialsId: 'Rally_cred', variable: 'rally_api_token')]){
+            sh "helm upgrade --install --tiller-namespace $openshiftnamespace --namespace $openshiftnamespace $openshiftreleasename ./gitlab-rally-bot/ --set rally_api_token=$rally_api_token --wait"
+}
+}
+
+  }
 }

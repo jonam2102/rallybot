@@ -1,0 +1,33 @@
+replicaCount: 1
+image: 
+  repository: quay.sys.test.com/test/gitrallybot
+  tag: latest
+  pullPolicy: IfNotPresent
+service: 
+  name: gitlab-rally-bot
+  type: ClusterIP 
+  externalPort: 8080
+  internalPort: 8080
+  protocol: TCP
+ingress: 
+  enabled: false
+  hosts:
+  # - chart-example.local
+  annotations:
+  # kubernetes.io/ingress.class: nginx
+  # kubernetes.io/tls-acme: "true" 
+  tls:
+  # Secrets must be manually created in the namespace
+  # - secretName: chart-example-tls 
+  # hosts: 
+  #   - chart-example.local
+ resources: 
+ 
+ limits: 
+   cpu: 2
+   memory: 1Gi
+ requests:
+   cpu: 200m
+   memory: 512Mi
+    
+
