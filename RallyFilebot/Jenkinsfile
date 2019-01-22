@@ -1,0 +1,60 @@
+node('linux')
+{
+	
+	stage('Checkout SCM')
+	{
+	 git branch : 'development', changelog: false, credentialsID: 'testingtools', pool: false , url : http://git.testurl.sys.com/tools/gitlab-rally-bot.git
+	}
+
+	stage('Read params file')
+
+    {
+    def props = readProperties file : 'param.properties'
+    imageversion = props["gitrallybottag"]
+    tillertag = props["tillertag"]
+    openshifturl = props["openshifturl"]
+    openshiftreleasename = props["openshiftreleasename"]
+    configchange = props["configchange"] 
+    }
+
+
+    stage('Docker build image')
+    {
+      dockerTag = "quay.sys.com/test/gitrallybot:$imageversion"
+      sh """
+           set +x
+           docker build --pull\
+           --build-arg "version=${imageversion}" \
+           --no-cache \t
+           -t $dockerTag . 
+
+         """
+
+    }
+
+    stage ('Docker push image')
+    {
+     withCredentials([usernamePassword(credentialsId: 'quaybotdevopscoecicd2', passwordVariable: 'pass', usernameVariable: 'un')])
+     //app.push("$imageversion-dev")
+     sh """
+          docker login -u=$un -p=$pass https://quay.sys.com
+          docker push "$dockerTage"
+        """
+    }
+
+    stage ('Docker delete image')
+    {
+     sh "docker rmi $dockerTag"
+    }
+
+
+}
+
+  stage('Deploy openshift image')
+  {
+    withCredentials([string(credentialsId: 'Openshift_devops-jenkins-dev', variable: 'pass')])
+
+{
+	
+}  }
+}

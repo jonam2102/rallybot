@@ -1,0 +1,5 @@
+source 'http://repo.sys.test.com/artifactory/rubygems-repos/'
+
+gem 'json','1.7.7'
+gem 'rally_api','1.2.1'
+gem 'pp','0.1.1'
